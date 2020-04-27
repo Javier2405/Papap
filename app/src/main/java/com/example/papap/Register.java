@@ -15,6 +15,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
@@ -75,6 +76,10 @@ public class Register extends AppCompatActivity {
                     emailRF.setError("Correo es requerido");
                     return;
                 }
+                if (!android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()){
+                    emailRF.setError("Correo no es valido");
+                    return;
+                }
                 if (TextUtils.isEmpty(password)){
                     passwordRF.setError("Contraseña es requerida");
                     return;
@@ -110,6 +115,11 @@ public class Register extends AppCompatActivity {
                                 @Override
                                 public void onSuccess(Void aVoid) {
                                     Log.d("INSERTION", "onSuccess: user profile is created for "+ userID);
+                                }
+                            }).addOnFailureListener(new OnFailureListener() {
+                                @Override
+                                public void onFailure(@NonNull Exception e) {
+                                    Log.d("INSERTION", "onFailure: "+ e.toString());
                                 }
                             });
 
