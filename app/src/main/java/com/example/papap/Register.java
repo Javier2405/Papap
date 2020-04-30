@@ -26,8 +26,6 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import java.util.HashMap;
 import java.util.Map;
 
-import io.opencensus.tags.Tag;
-
 public class Register extends AppCompatActivity {
 
     EditText fullNameRF, emailRF, passwordRF, phoneRF;
@@ -44,13 +42,14 @@ public class Register extends AppCompatActivity {
         setContentView(R.layout.activity_register);
 
         //initialize components
-        fullNameRF = findViewById(R.id.fullNameFieldR);
-        emailRF = findViewById(R.id.emailFieldR);
-        passwordRF = findViewById(R.id.passRegister);
+        fullNameRF = findViewById(R.id.nameFieldR);
+        emailRF = findViewById(R.id.creditCardNumberFieldR);
+        passwordRF = findViewById(R.id.dueDateFieldR);
         phoneRF = findViewById(R.id.phoneField);
         registerButton = findViewById(R.id.registerButton);
         login = findViewById(R.id.loginR);
         progressBar = findViewById(R.id.progressBarR);
+
         //initialize firebase
         fAuth = FirebaseAuth.getInstance();
         fStore = FirebaseFirestore.getInstance();
@@ -110,6 +109,7 @@ public class Register extends AppCompatActivity {
                             user.put("Nombre", fullName);
                             user.put("Correo Electronico", email);
                             user.put("Telefono", phone);
+                            user.put("tarjeta", false);
                             //insert to data base
                             documentReference.set(user).addOnSuccessListener(new OnSuccessListener<Void>() {
                                 @Override

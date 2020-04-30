@@ -1,3 +1,10 @@
 <resources>
     <string name="app_name">Papap</string>
+    <string name="dieta">Dieta</string>
+
+    //Registro de tarjeta
+    <string name="registrar_tarjeta">Registrar tarjeta de crédito</string>
+    <string name="titular">Nombre del titular de la tarjeta</string>
+    <string name="numero_tarjeta">Numero de tarjeta</string>
+    <string name="vencimiento">Fecha de vencimiento</string>
 </resources>
