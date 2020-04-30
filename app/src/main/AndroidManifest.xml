@@ -11,7 +11,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".Information"></activity>
+        <activity android:name=".Paps"></activity>
+        <activity android:name=".Information" />
         <activity android:name=".CreditCard" />
         <activity android:name=".Login" />
         <activity android:name=".MainActivity" />
