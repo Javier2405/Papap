@@ -42,7 +42,7 @@ public class Register extends AppCompatActivity {
         setContentView(R.layout.activity_register);
 
         //initialize components
-        fullNameRF = findViewById(R.id.nameFieldR);
+        fullNameRF = findViewById(R.id.nameF);
         emailRF = findViewById(R.id.creditCardNumberFieldR);
         passwordRF = findViewById(R.id.dueDateFieldR);
         phoneRF = findViewById(R.id.phoneField);
@@ -110,6 +110,7 @@ public class Register extends AppCompatActivity {
                             user.put("Correo Electronico", email);
                             user.put("Telefono", phone);
                             user.put("tarjeta", false);
+                            user.put("bebe", false);
                             //insert to data base
                             documentReference.set(user).addOnSuccessListener(new OnSuccessListener<Void>() {
                                 @Override
