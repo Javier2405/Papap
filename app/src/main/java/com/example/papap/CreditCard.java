@@ -7,7 +7,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
-import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -15,10 +14,15 @@ import android.widget.Toast;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
 
 import java.util.HashMap;
 import java.util.Map;
+
+import javax.annotation.Nullable;
 
 public class CreditCard extends AppCompatActivity {
     EditText creditCardName, creditCardNumber, dueDate;
@@ -30,7 +34,7 @@ public class CreditCard extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_credit_card);
 
-        creditCardName = findViewById(R.id.nameFieldR);
+        creditCardName = findViewById(R.id.nameF);
         creditCardNumber = findViewById(R.id.creditCardNumberFieldR);
         dueDate = findViewById(R.id.dueDateFieldR);
         registerButton = findViewById(R.id.registerButton);
@@ -92,7 +96,28 @@ public class CreditCard extends AppCompatActivity {
             });
 
             Toast.makeText(this, "La tarjeta de credito fue crada con éxito", Toast.LENGTH_SHORT).show();
-            startActivity(new Intent(getApplicationContext(), Information.class));
+            documentReference.addSnapshotListener(CreditCard.this, new EventListener<DocumentSnapshot>() {
+                @Override
+                public void onEvent(@Nullable DocumentSnapshot documentSnapshot, @Nullable FirebaseFirestoreException e) {
+                    if (e!=null){
+                        Log.d("ERROR","Error:"+e.getMessage());
+                    }else{
+                        if(documentSnapshot.getBoolean("tarjeta") && documentSnapshot.getBoolean("bebe")){
+                            Intent changeActivity = new Intent(getApplicationContext(), Paps.class);
+                            changeActivity.putExtra("userid",userID);
+                            startActivity(changeActivity);
+                        }else if(!documentSnapshot.getBoolean("tarjeta")){
+                            Intent changeActivity = new Intent(getApplicationContext(), CreditCard.class);
+                            changeActivity.putExtra("userid",userID);
+                            startActivity(changeActivity);
+                        }else if(!documentSnapshot.getBoolean("bebe")){
+                            Intent changeActivity = new Intent(getApplicationContext(), Information.class);
+                            changeActivity.putExtra("userid",userID);
+                            startActivity(changeActivity);
+                        }
+                    }
+                }
+            });
         });
 
     }

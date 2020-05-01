@@ -7,4 +7,16 @@
     <string name="titular">Nombre del titular de la tarjeta</string>
     <string name="numero_tarjeta">Numero de tarjeta</string>
     <string name="vencimiento">Fecha de vencimiento</string>
+
+    //Registro de bebe
+    <string name="registrar_bebe">Registrar bebe</string>
+    <string name="nombre_bebe">Nombre del bebe</string>
+    <string name="edad">Edad</string>
+    <string name="genero">Genero</string>
+    <string name="alergias">Alergias</string>
+    <string name="disgustos">Disgustos</string>
+
+    //Papillas
+    <string name="papilla">Papillas</string>
+
 </resources>

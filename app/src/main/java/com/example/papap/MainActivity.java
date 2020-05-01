@@ -80,10 +80,16 @@ public class MainActivity extends AppCompatActivity {
                     if (e!=null){
                         Log.d("ERROR","Error:"+e.getMessage());
                     }else{
-                        if(documentSnapshot.getBoolean("tarjeta")){
-                            startActivity(new Intent(getApplicationContext(), Information.class));
-                        }else{
+                        if(documentSnapshot.getBoolean("tarjeta") && documentSnapshot.getBoolean("bebe")){
+                            Intent changeActivity = new Intent(getApplicationContext(), Paps.class);
+                            changeActivity.putExtra("userid",userID);
+                            startActivity(changeActivity);
+                        }else if(!documentSnapshot.getBoolean("tarjeta")){
                             Intent changeActivity = new Intent(getApplicationContext(), CreditCard.class);
+                            changeActivity.putExtra("userid",userID);
+                            startActivity(changeActivity);
+                        }else if(!documentSnapshot.getBoolean("bebe")){
+                            Intent changeActivity = new Intent(getApplicationContext(), Information.class);
                             changeActivity.putExtra("userid",userID);
                             startActivity(changeActivity);
                         }
