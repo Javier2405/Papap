@@ -2,6 +2,12 @@
     <string name="app_name">Papap</string>
     <string name="dieta">Dieta</string>
 
+    //restablecer contraseña
+    <string name="resetTitulo">Restablece tu contraseña</string>
+    <string name="resetMensaje">Ingresa tu correo y haz click en el link para cambiar tu contraseña</string>
+    <string name="resetConfirmacion">Correo enviado!</string>
+    <string name="resetError">Error! El correo no está registrado en Papap</string>
+
     //Registro de tarjeta
     <string name="registrar_tarjeta">Registrar tarjeta de crédito</string>
     <string name="titular">Nombre del titular de la tarjeta</string>
