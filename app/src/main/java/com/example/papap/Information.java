@@ -12,6 +12,7 @@ import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.MultiAutoCompleteTextView;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnFailureListener;
@@ -53,14 +54,20 @@ public class Information extends AppCompatActivity {
         Spinner disgustos = findViewById(R.id.spinnerDisgustos);
         disgustos.setAdapter(adapterDisgustos);
 
+        TextView nombre = findViewById(R.id.nameF);
         Button registerButton = findViewById(R.id.registerButton);
 
         registerButton.setOnClickListener((v)->{
+            String strNombre = nombre.getText().toString();
             String strEdad = String.valueOf(edad.getSelectedItem());
             String strGenero = String.valueOf(genero.getSelectedItem());
             String strAlergias = String.valueOf(alergias.getSelectedItem());
             String strDisgustos = String.valueOf(disgustos.getSelectedItem());
 
+            if(strNombre.equals("")){
+                Toast.makeText(this, "El nombre es necesario para identificar al bebé", Toast.LENGTH_SHORT).show();
+                return;
+            }
             if(strEdad.equals("Selecciona la edad")){
                 Toast.makeText(this, "Seleccionar todos los campos es obligatorio", Toast.LENGTH_SHORT).show();
                 return;
@@ -91,12 +98,13 @@ public class Information extends AppCompatActivity {
             bebe.put("Genero", strGenero);
             bebe.put("Alergias", strAlergias);
             bebe.put("Disgustos", strDisgustos);
+            bebe.put("Nombre",strNombre);
             //insert to data base
             documentReference.collection("bebe").document().set(bebe).addOnSuccessListener(new OnSuccessListener<Void>() {
                 @Override
                 public void onSuccess(Void aVoid) {
                     Log.d("INSERTION", "Info was added satisfactory");
-                    Intent changeActivity = new Intent(getApplicationContext(), Paps.class);
+                    Intent changeActivity = new Intent(getApplicationContext(),MainActivity.class);
                     changeActivity.putExtra("userid",userID);
                     startActivity(changeActivity);
                 }

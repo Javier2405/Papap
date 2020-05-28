@@ -68,11 +68,15 @@ public class CreditCard extends AppCompatActivity {
             tarjeta.put("Nombre del titular", creditCardName.getText().toString());
             tarjeta.put("Numero de tarjeta", creditCardNumber.getText().toString());
             tarjeta.put("Vencimiento", dueDate.getText().toString());
+            tarjeta.put("selected",false);
             //insert to data base
             documentReference.collection("tarjeta").document().set(tarjeta).addOnSuccessListener(new OnSuccessListener<Void>() {
                 @Override
                 public void onSuccess(Void aVoid) {
                     Log.d("INSERTION", "Info was added satisfactory");
+                    Intent changeActivity = new Intent(getApplicationContext(),MainActivity.class);
+                    changeActivity.putExtra("userid",userID);
+                    startActivity(changeActivity);
                 }
             }).addOnFailureListener(new OnFailureListener() {
                 @Override
@@ -96,28 +100,7 @@ public class CreditCard extends AppCompatActivity {
             });
 
             Toast.makeText(this, "La tarjeta de credito fue crada con éxito", Toast.LENGTH_SHORT).show();
-            documentReference.addSnapshotListener(CreditCard.this, new EventListener<DocumentSnapshot>() {
-                @Override
-                public void onEvent(@Nullable DocumentSnapshot documentSnapshot, @Nullable FirebaseFirestoreException e) {
-                    if (e!=null){
-                        Log.d("ERROR","Error:"+e.getMessage());
-                    }else{
-                        if(documentSnapshot.getBoolean("tarjeta") && documentSnapshot.getBoolean("bebe")){
-                            Intent changeActivity = new Intent(getApplicationContext(), Paps.class);
-                            changeActivity.putExtra("userid",userID);
-                            startActivity(changeActivity);
-                        }else if(!documentSnapshot.getBoolean("tarjeta")){
-                            Intent changeActivity = new Intent(getApplicationContext(), CreditCard.class);
-                            changeActivity.putExtra("userid",userID);
-                            startActivity(changeActivity);
-                        }else if(!documentSnapshot.getBoolean("bebe")){
-                            Intent changeActivity = new Intent(getApplicationContext(), Information.class);
-                            changeActivity.putExtra("userid",userID);
-                            startActivity(changeActivity);
-                        }
-                    }
-                }
-            });
+
         });
 
     }
