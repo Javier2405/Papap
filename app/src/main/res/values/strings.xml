@@ -8,11 +8,21 @@
     <string name="resetConfirmacion">Correo enviado!</string>
     <string name="resetError">Error! El correo no está registrado en Papap</string>
 
+    //Fragment tarjetas
+    <string name="select_card">"Seleccionar"</string>
+    <string name="delete_card">"Borrar"</string>
+    <string name="add_card">"Añadir tarjeta"</string>
+
     //Registro de tarjeta
     <string name="registrar_tarjeta">Registrar tarjeta de crédito</string>
     <string name="titular">Nombre del titular de la tarjeta</string>
     <string name="numero_tarjeta">Numero de tarjeta</string>
     <string name="vencimiento">Fecha de vencimiento</string>
+
+    //Fragment bebe
+    <string name="edit_baby">"Editar"</string>
+    <string name="delete_baby">"Borrar"</string>
+    <string name="add_baby">"Añadir bebé"</string>
 
     //Registro de bebe
     <string name="registrar_bebe">Registrar bebe</string>

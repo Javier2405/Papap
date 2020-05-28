@@ -38,7 +38,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     Button logoutButton, dietButton;
     FirebaseAuth fAuth;
     FirebaseFirestore fStore;
-    //String userID;
+    String userID;
 
     //Drawer, navigation view & toolbar
     DrawerLayout drawerLayout;
@@ -85,7 +85,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         fAuth = FirebaseAuth.getInstance();
         fStore = FirebaseFirestore.getInstance();
 
-        //userID = fAuth.getCurrentUser().getUid();
+        userID = fAuth.getCurrentUser().getUid();
 
         /*
         //getting the user
@@ -174,5 +174,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }
 
         return false;
+    }
+
+    public String getUserID(){
+        return this.userID;
     }
 }

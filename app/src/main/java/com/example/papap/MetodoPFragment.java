@@ -1,12 +1,29 @@
 package com.example.papap;
 
+import android.app.PendingIntent;
+import android.content.Intent;
 import android.os.Bundle;
 
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+
+import com.google.firebase.firestore.DocumentChange;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.EventListener;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.QuerySnapshot;
+
+import java.util.ArrayList;
+import java.util.List;
 
 
 /**
@@ -19,6 +36,13 @@ public class MetodoPFragment extends Fragment {
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
+
+    private AdapterCard adapterCard;
+    private RecyclerView recyclerView;
+    ArrayList<Card> card_list;
+    FirebaseFirestore fStore;
+    Button add_card;
+    String userID;
 
     // TODO: Rename and change types of parameters
     private String mParam1;
@@ -59,6 +83,55 @@ public class MetodoPFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_metodo_p, container, false);
+        View view = inflater.inflate(R.layout.fragment_metodo_p, container, false);
+        this.recyclerView = view.findViewById(R.id.recyclerView);
+        this.card_list = new ArrayList<>();
+        fStore = FirebaseFirestore.getInstance();
+        MainActivity activity = (MainActivity) getActivity();
+        this.userID = activity.getUserID();
+        loadData();
+
+        this.add_card = view.findViewById(R.id.add_card);
+        this.add_card.setOnClickListener((v) -> {
+            Intent changeActivity = new Intent(getActivity().getApplicationContext(), CreditCard.class);
+            changeActivity.putExtra("userid",userID);
+            changeActivity.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+            startActivity(changeActivity);
+        });
+        return view;
+    }
+
+    public void loadData(){
+        DocumentReference documentReference = fStore.collection("users").document(userID);
+
+        //QUERY DE TODOS LOS DOCUMENTOS QUE TIENE UNA COLECCION DE DATOS EN FIREBASE
+        documentReference.collection("tarjeta").addSnapshotListener(new EventListener<QuerySnapshot>() {
+            @Override
+            public void onEvent(@Nullable QuerySnapshot documentSnapshot, @Nullable FirebaseFirestoreException e) {
+                if (e!=null){
+                    Log.d("Error citas","Error:"+e.getMessage());
+                }else if(documentSnapshot.isEmpty()) {
+                    Log.d("Empty list","The list is empty");
+                }else{
+                    for (DocumentChange documentChange : documentSnapshot.getDocumentChanges()) {
+                        Card card = new Card(documentChange.getDocument().getString("Nombre del titular"),
+                                documentChange.getDocument().getString("Numero de tarjeta"),
+                                documentChange.getDocument().getString("Vencimiento"),
+                                documentChange.getDocument().getBoolean("selected"));
+                        card_list.add(card);
+                        Log.d("LIST SIZE", Integer.toString(card_list.size()));
+                    }
+                    showData();
+                }
+            }
+        });
+    }
+
+    public void showData(){
+        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        Log.d("LIST SIZE SHOW", Integer.toString(this.card_list.size()));
+        this.adapterCard= new AdapterCard(getContext(), this.card_list);
+        recyclerView.setAdapter(this.adapterCard);
+
     }
 }
