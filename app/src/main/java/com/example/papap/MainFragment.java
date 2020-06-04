@@ -40,29 +40,8 @@ public class MainFragment extends Fragment {
     FirebaseFirestore db;
     String userID;
 
-    public void addBaby_list(Baby baby) {
-        this.baby_list.add(baby);
-    }
-
-    public Baby getBaby_list(int i) {
-        return baby_list.get(i);
-    }
-
-    public int sizeBaby_list() {
-        return this.baby_list.size();
-    }
-
     ArrayList<Baby> baby_list;
-
-    public void setBabies(String[] babies) {
-        this.babies = babies;
-    }
-
     String[] babies;
-
-    public void setPaps(ArrayList<Pap> paps) {
-        this.paps = paps;
-    }
 
     ArrayList<Pap> paps;
 
@@ -78,6 +57,7 @@ public class MainFragment extends Fragment {
 
     Button btn_siguiente;
     Button btn_anterior;
+
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -91,14 +71,6 @@ public class MainFragment extends Fragment {
         // Required empty public constructor
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment MainFragment.
-     */
     // TODO: Rename and change types and number of parameters
     public static MainFragment newInstance(String param1, String param2) {
         MainFragment fragment = new MainFragment();
@@ -131,12 +103,20 @@ public class MainFragment extends Fragment {
         //Los botones hacen un set a la información
         //El spinner hace un set a la información
 
+        MainActivity activity = (MainActivity) getActivity();
         View view = inflater.inflate(R.layout.fragment_main, container, false);
 
         db = FirebaseFirestore.getInstance();
 
         dia = view.findViewById(R.id.spinner_dia);
+        ArrayAdapter<String> adapterDia = new ArrayAdapter<String>(activity,
+                android.R.layout.simple_dropdown_item_1line, DIAS_OPTIONS);
+        dia.setAdapter(adapterDia);
         bebe = view.findViewById(R.id.spinner_bebe);
+        this.baby_list = new ArrayList<>();
+        this.paps = new ArrayList<>();
+        this.userID = activity.getUserID();
+        loadPaps(activity,view); //Loadpaps carga todas las paps de la base de datos, despues carga todos los bebes y finalmente hace el set de las dietas para cada dia
 
         hora = view.findViewById(R.id.textView_hora);
         nombre_receta = view.findViewById(R.id.textView_nombre_receta);
@@ -148,101 +128,11 @@ public class MainFragment extends Fragment {
         btn_siguiente = view.findViewById(R.id.btn_siguiente);
         btn_anterior = view.findViewById(R.id.btn_anterior);
 
-        this.baby_list = new ArrayList<>();
-        this.paps = new ArrayList<>();
-
-        MainActivity activity = (MainActivity) getActivity();
-
-        ArrayAdapter<String> adapterDia = new ArrayAdapter<String>(activity,
-                android.R.layout.simple_dropdown_item_1line, DIAS_OPTIONS);
-        dia.setAdapter(adapterDia);
-
-        this.userID = activity.getUserID();
-
-        loadPaps(activity,view);
-
         return view;
     }
 
-    private void loadBabies(MainActivity activity, View view){
-        db.collection("users").document(userID).collection("bebe").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-
-
-            @Override
-            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-
-                if (task.isSuccessful()) {
-                    for (QueryDocumentSnapshot document : task.getResult()) {
-                        Baby baby = new Baby(document.getString("Nombre"),
-                                document.getString("Edad"),
-                                document.getString("Genero"),
-                                document.getString("Disgustos"),
-                                document.getString("Alergias"));
-                        //babyAdd(baby,activity,view);
-                        addBaby_list(baby);
-                        Log.d("LIST SIZE", Integer.toString(baby_list.size()));
-                    }
-                    Spinner bebe;
-                    String[] babiesName = new String[sizeBaby_list()];
-                    for (int i = 0;babiesName.length>i;i++){
-                        babiesName[i] = getBaby_list(i).getName();
-
-                    }
-                    bebe = view.findViewById(R.id.spinner_bebe);
-                    ArrayAdapter<String> adapterBebe = new ArrayAdapter<String>(activity,
-                            android.R.layout.simple_dropdown_item_1line, babiesName);
-                    bebe.setAdapter(adapterBebe);
-
-                    setBabies(babiesName);
-
-                } else {
-                    Log.d("NO JALO", "Error getting documents: ", task.getException());
-                }
-            }
-        });
-
-        /*DocumentReference documentReference = db.collection("users").document(userID);
-        documentReference.collection("bebe").addSnapshotListener(new EventListener<QuerySnapshot>() {
-            @Override
-            public void onEvent(@Nullable QuerySnapshot documentSnapshot, @Nullable FirebaseFirestoreException e) {
-                if (e!=null){
-                    Log.d("Error citas","Error:"+e.getMessage());
-                }else{
-                    for (DocumentChange documentChange : documentSnapshot.getDocumentChanges()) {
-                        //Log.d("citas", documentChange.getDocument().getString("Nombre"));
-                        Baby baby = new Baby(documentChange.getDocument().getString("Nombre"),
-                                documentChange.getDocument().getString("Edad"),
-                                documentChange.getDocument().getString("Genero"),
-                                documentChange.getDocument().getString("Disgustos"),
-                                documentChange.getDocument().getString("Alergias"));
-                        babyAdd(baby,activity,view);
-                        Log.d("LIST SIZE", Integer.toString(baby_list.size()));
-                    }
-                }
-            }
-        });*/
-    }
-
-    private void babyAdd(Baby baby,MainActivity activity, View view){
-        Spinner bebe;
-
-        this.baby_list.add(baby);
-        String[] babiesName = new String[this.baby_list.size()];
-        for (int i = 0;babiesName.length>i;i++){
-            babiesName[i] = this.baby_list.get(i).getName();
-        }
-        bebe = view.findViewById(R.id.spinner_bebe);
-        ArrayAdapter<String> adapterBebe = new ArrayAdapter<String>(activity,
-                android.R.layout.simple_dropdown_item_1line, babiesName);
-        bebe.setAdapter(adapterBebe);
-
-        babies = babiesName;
-
-    }
-
     private void loadPaps(MainActivity activity, View view){
-
-
+        //Obtengo todos los documentos de la collection paps de la base de datos
         db.collection("paps").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             private ArrayList<Pap> paps = new ArrayList<>();
 
@@ -255,22 +145,81 @@ public class MainFragment extends Fragment {
                         List<String> pasos = (List<String>) document.get("Pasos");
                         Pap pap = new Pap(document.getString("Nombre"),Integer.parseInt(document.getString("Calorias")),ingredientes,pasos);
                         paps.add(pap);
-                        Log.d("SI JALO?", pap.getNombre());
+                        Log.d("PAP", pap.getNombre());
                     }
+                    //Termino de obtener los documents asi que procedo a hacer el set de las papillas
                     setPaps(paps);
+
+                    //Llamo al metodo para obtener los bebes una vez hago el set de las papillas
                     loadBabies(activity,view);
 
                 } else {
-                    Log.d("NO JALO", "Error getting documents: ", task.getException());
+                    Log.d("ERROR", "Error getting documents: ", task.getException());
                 }
             }
         });
-
-
-
-
     }
 
+    private void loadBabies(MainActivity activity, View view){
+        //Obteniendo todos los documents de la collection bebe del usuario
+        db.collection("users").document(userID).collection("bebe").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                if (task.isSuccessful()) {
+                    for (QueryDocumentSnapshot document : task.getResult()) {
+                        Baby baby = new Baby(document.getString("Nombre"),
+                                document.getString("Edad"),
+                                document.getString("Genero"),
+                                document.getString("Disgustos"),
+                                document.getString("Alergias"));
+                        addBaby_list(baby);
+                        Log.d("BABY", baby.getName());
+                    }
+                    //Termino de obtener los documents asi que procedo a hacer el set del nombre de los bebes para mi spinner
+
+                    String[] babiesName = new String[sizeBaby_list()];
+                    for (int i = 0;babiesName.length>i;i++){
+                        babiesName[i] = getBaby_list(i).getName();
+
+                    }
+
+                    Spinner bebe = view.findViewById(R.id.spinner_bebe);
+                    ArrayAdapter<String> adapterBebe = new ArrayAdapter<String>(activity,
+                            android.R.layout.simple_dropdown_item_1line, babiesName);
+                    bebe.setAdapter(adapterBebe);
+                    setBabies(babiesName);
+
+                    //Llamo al metodo para crear el array de dietas de cada bebe
+
+                } else {
+                    Log.d("ERROR", "Error getting documents: ", task.getException());
+                }
+            }
+        });
+    }
+
+    public void addBaby_list(Baby baby) {
+        this.baby_list.add(baby);
+    }
+
+    public Baby getBaby_list(int i) {
+        return baby_list.get(i);
+    }
+
+    public int sizeBaby_list() {
+        return this.baby_list.size();
+    }
+
+    public void setBabies(String[] babies) {
+        this.babies = babies;
+    }
+
+    public void setPaps(ArrayList<Pap> paps) {
+        this.paps = paps;
+    }
+
+    //Array para el spinner de dias
     private static final String[] DIAS_OPTIONS = new String[] {
             "1","2","3","4","5","6","7","8","9","10","11","12","13","14","15","16","17","18","19","20","21","22","23","24","25","26","27","28","29","30"
     };

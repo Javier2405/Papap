@@ -4,6 +4,7 @@ import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+//Se asigna un pap selector a cada bebe y con este vemos si la papilla es valida
 public class PapsSelector {
     private String gender;
     private int age;
