@@ -28,6 +28,7 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 
@@ -42,6 +43,7 @@ public class MainFragment extends Fragment {
 
     ArrayList<Baby> baby_list;
     String[] babies;
+    HashMap<Baby,ArrayList<Diet>> dietPerBaby;
 
     ArrayList<Pap> paps;
 
@@ -97,8 +99,7 @@ public class MainFragment extends Fragment {
 
         //Agregar valores a spinner HECHO
         //Obtener array de papilla almacenadas HECHO
-        //Obtener array de papillas -> Obtener array de bebes y set de spinner HECHO -> Calcular las dietas de lo obtenido
-        //Obtener el array de papillas para el bebe
+        //Obtener array de papillas -> Obtener array de bebes y set de spinner -> Calcular las dietas de lo obtenido HECHO
         //Al cambiar el bebe se recalcula
         //Los botones hacen un set a la información
         //El spinner hace un set a la información
@@ -115,6 +116,7 @@ public class MainFragment extends Fragment {
         bebe = view.findViewById(R.id.spinner_bebe);
         this.baby_list = new ArrayList<>();
         this.paps = new ArrayList<>();
+        this.dietPerBaby = new HashMap<>();
         this.userID = activity.getUserID();
         loadPaps(activity,view); //Loadpaps carga todas las paps de la base de datos, despues carga todos los bebes y finalmente hace el set de las dietas para cada dia
 
@@ -191,12 +193,81 @@ public class MainFragment extends Fragment {
                     setBabies(babiesName);
 
                     //Llamo al metodo para crear el array de dietas de cada bebe
+                    setDietsPerBaby();
 
+                    //Imprimo las dietas de los engendros
+                    printDietsPerBaby();
                 } else {
                     Log.d("ERROR", "Error getting documents: ", task.getException());
                 }
             }
         });
+    }
+
+    private void setDietsPerBaby(){
+        //Pasar por el array de bebes para hacer el set de la dieta del mes para los bebes
+        HashMap<Baby,ArrayList<Diet>> dietPerBaby = new HashMap<>();
+
+        for (int i =0;i<this.baby_list.size();i++){
+            //Obtengo la dieta mensual para cade bebe y la voy almacenando
+            dietPerBaby.put(this.baby_list.get(i),this.setDiet(this.baby_list.get(i),this.paps));
+        }
+
+        this.setDietPerBaby(dietPerBaby);
+    }
+
+    private ArrayList<Diet> setDiet(Baby baby,ArrayList<Pap> paps){
+        PapsSelector papsSelector = new PapsSelector(baby.getGender(),baby.getAge(),baby.getDislikes());
+        ArrayList<Diet> month = new ArrayList<>();
+
+        //Revisar cuales papilla se le pueden dar al bebe almacenarlas y luego usando numeros random dar tres por dia
+        ArrayList<Pap> validPaps = new ArrayList<>();
+        for (int i = 0;i<paps.size();i++){
+            if(papsSelector.validPaps(paps.get(i).getIngredientes())){
+                validPaps.add(paps.get(i));
+            }
+        }
+
+        //Hacemos el set de un numero random y lo usamos para tomar papillas random de las validas
+        double random;
+
+        for (int i = 0;i<30;i++){
+            random = (Math.random()*((validPaps.size())));
+
+            //Generamos una variable dieta para ese dia y validamos que las calorias sean las correctas
+            Diet diet = new Diet();
+            while(papsSelector.validCalories(validPaps.get((int) random).getCalorias())){
+                random = (Math.random()*((validPaps.size())));
+            }
+            diet.setEvening(validPaps.get((int) random));
+
+            random = (Math.random()*((validPaps.size())));
+            while(papsSelector.validCalories(validPaps.get((int) random).getCalorias())){
+                random = (Math.random()*((validPaps.size())));
+            }
+            diet.setMorning(validPaps.get((int) random));
+
+            random = (Math.random()*((validPaps.size())));
+            while(papsSelector.validCalories(validPaps.get((int) random).getCalorias())){
+                random = (Math.random()*((validPaps.size())));
+            }
+            diet.setNigth(validPaps.get((int) random));
+
+            month.add(diet);
+        }
+
+        return month;
+    }
+
+    //Debugging function
+    private void printDietsPerBaby(){
+        for (int i = 0;i<this.baby_list.size();i++){
+            ArrayList<Diet> month = this.dietPerBaby.get(this.baby_list.get(i));
+            Log.d("BABY NAME", this.baby_list.get(i).getName());
+            for (int j = 0; j < month.size(); j++){
+                Log.d("BABY DIET PER DAY", Integer.toString(j) + ":" + month.get(j).toString());
+            }
+        }
     }
 
     public void addBaby_list(Baby baby) {
@@ -217,6 +288,14 @@ public class MainFragment extends Fragment {
 
     public void setPaps(ArrayList<Pap> paps) {
         this.paps = paps;
+    }
+
+    public HashMap<Baby, ArrayList<Diet>> getDietPerBaby() {
+        return dietPerBaby;
+    }
+
+    public void setDietPerBaby(HashMap<Baby, ArrayList<Diet>> dietPerBaby) {
+        this.dietPerBaby = dietPerBaby;
     }
 
     //Array para el spinner de dias

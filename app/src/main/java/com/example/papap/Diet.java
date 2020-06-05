@@ -1,5 +1,7 @@
 package com.example.papap;
 
+import androidx.annotation.NonNull;
+
 //Cada bebe tendra una dieta por dia, en el main fragment habra un array de treinta de estos para cada bebe
 public class Diet {
     private Pap morning,
@@ -16,6 +18,12 @@ public class Diet {
         this.morning = morning;
         this.evening = evening;
         this.nigth = nigth;
+    }
+
+    @NonNull
+    @Override
+    public String toString() {
+        return ("Morning" + this.getMorning().getNombre() + ", Evening" + this.getEvening().getNombre() + ", Night" + this.getNigth().getNombre());
     }
 
     public Pap getMorning() {
