@@ -74,41 +74,4 @@ public class PapsSelector {
             return false;
         }
     }
-
-    public void resetCalories(){
-        if(this.gender.equals("Masculino")){
-            switch (age){
-                case "6 meses":
-                case "7 meses":
-                    this.calories = 635;
-                    break;
-                case "8 meses":
-                case "9 meses":
-                case "10 meses":
-                    this.calories = 714;
-                    break;
-                case "11 meses":
-                case "12 meses":
-                    this.calories = 819;
-                    break;
-            }
-
-        } if(this.gender.equals("Femenino")) {
-            switch (age){
-                case "6 meses":
-                case "7 meses":
-                    this.calories = 725;
-                    break;
-                case "8 meses":
-                case "9 meses":
-                case "10 meses":
-                    this.calories = 659;
-                    break;
-                case "11 meses":
-                case "12 meses":
-                    this.calories = 759;
-                    break;
-            }
-        }
-    }
 }

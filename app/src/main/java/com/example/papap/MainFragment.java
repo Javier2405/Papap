@@ -11,6 +11,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
@@ -40,6 +41,8 @@ import java.util.List;
 public class MainFragment extends Fragment {
     FirebaseFirestore db;
     String userID;
+
+    String comida = "Mañana";
 
     ArrayList<Baby> baby_list;
     String[] babies;
@@ -100,9 +103,10 @@ public class MainFragment extends Fragment {
         //Agregar valores a spinner HECHO
         //Obtener array de papilla almacenadas HECHO
         //Obtener array de papillas -> Obtener array de bebes y set de spinner -> Calcular las dietas de lo obtenido HECHO
-        //Al cambiar el bebe se recalcula
-        //Los botones hacen un set a la información
-        //El spinner hace un set a la información
+        //Hacer set de la información HECHO
+        //Los botones hacen un set a la información HECHO
+        //El spinner hace un set a la información HECHO
+        //Agregar alerta de carga
 
         MainActivity activity = (MainActivity) getActivity();
         View view = inflater.inflate(R.layout.fragment_main, container, false);
@@ -129,6 +133,44 @@ public class MainFragment extends Fragment {
 
         btn_siguiente = view.findViewById(R.id.btn_siguiente);
         btn_anterior = view.findViewById(R.id.btn_anterior);
+
+        btn_siguiente.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                switch (getComida()){
+                    case "Mañana":
+                        setComida("Tarde");
+                        break;
+                    case "Tarde":
+                        setComida("Noche");
+                        break;
+                    case "Noche":
+                        setComida("Mañana");
+                        break;
+                }
+                setData(getBaby(getBebe().getSelectedItem().toString()),Integer.parseInt(getDia().getSelectedItem().toString()));
+            }
+        });
+
+        btn_anterior.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                switch (getComida()){
+                    case "Mañana":
+                        setComida("Noche");
+                        break;
+                    case "Tarde":
+                        setComida("Mañana");
+                        break;
+                    case "Noche":
+                        setComida("Tarde");
+                        break;
+                }
+                setData(getBaby(getBebe().getSelectedItem().toString()),Integer.parseInt(getDia().getSelectedItem().toString()));
+            }
+        });
+
+
 
         return view;
     }
@@ -197,6 +239,9 @@ public class MainFragment extends Fragment {
 
                     //Imprimo las dietas de los engendros
                     printDietsPerBaby();
+
+                    //Hago el set de los datos en la view
+                    setData(getBaby(getBebe().getSelectedItem().toString()),Integer.parseInt(getDia().getSelectedItem().toString()));
                 } else {
                     Log.d("ERROR", "Error getting documents: ", task.getException());
                 }
@@ -270,6 +315,116 @@ public class MainFragment extends Fragment {
         }
     }
 
+    private int getBaby(String name){
+        int i = 0;
+
+        for(;i<baby_list.size();i++){
+            if(baby_list.get(i).getName().equals(name)){
+                break;
+            }
+        }
+
+        return i;
+    }
+
+    private void setData(int baby, int day){
+        /*Hacer set de la hora
+        * Nombre de la receta
+        * Calorias
+        * Ingredientes
+        * Preparación
+        * */
+        this.getHora().setText(this.comida); //Set de hora
+        Diet diet = this.dietPerBaby.get(baby_list.get(baby)).get(day-1); //Obtener la dieta del dia
+        switch (getComida()){
+            case "Mañana":
+                this.getNombre_receta().setText(diet.getMorning().getNombre()); //Set del nombre de la receta
+                this.getCalorias().setText(Integer.toString(diet.getMorning().getCalorias())); //Set de las calorias
+                //Preparar el adapter de ingredientes
+                String[] array_ingredientes = new String[diet.getMorning().getIngredientes().size()];
+                for(int i = 0; i<diet.getMorning().getIngredientes().size();i++){
+                    array_ingredientes[i] = diet.getMorning().getIngredientes().get(i);
+                }
+                ArrayAdapter<String> adapter_ingredientes = new ArrayAdapter<String>(getActivity(),
+                        android.R.layout.simple_dropdown_item_1line, array_ingredientes);
+                this.getIngredientes().setAdapter(adapter_ingredientes); //Set de ingredientes
+                //Preparar el adapter de instrucciones
+                String[] array_pasos = new String[diet.getMorning().getPasos().size()];
+                for(int i = 0; i<diet.getMorning().getPasos().size();i++){
+                    array_pasos[i] = diet.getMorning().getPasos().get(i);
+                }
+                ArrayAdapter<String> adapter_pasos = new ArrayAdapter<String>(getActivity(),
+                        android.R.layout.simple_dropdown_item_1line, array_pasos);
+                this.getInstrucciones().setAdapter(adapter_pasos); //Set de instrucciones
+                break;
+            case "Tarde":
+                this.getNombre_receta().setText(diet.getEvening().getNombre()); //Set del nombre de la receta
+                this.getCalorias().setText(Integer.toString(diet.getEvening().getCalorias())); //Set de las calorias
+                //Preparar el adapter de ingredientes
+                String[] array_ingredientesT = new String[diet.getEvening().getIngredientes().size()];
+                for(int i = 0; i<diet.getEvening().getIngredientes().size();i++){
+                    array_ingredientesT[i] = diet.getEvening().getIngredientes().get(i);
+                }
+                ArrayAdapter<String> adapter_ingredientesT = new ArrayAdapter<String>(getActivity(),
+                        android.R.layout.simple_dropdown_item_1line, array_ingredientesT);
+                this.getIngredientes().setAdapter(adapter_ingredientesT); //Set de ingredientes
+                //Preparar el adapter de instrucciones
+                String[] array_pasosT = new String[diet.getEvening().getPasos().size()];
+                for(int i = 0; i<diet.getEvening().getPasos().size();i++){
+                    array_pasosT[i] = diet.getEvening().getPasos().get(i);
+                }
+                ArrayAdapter<String> adapter_pasosT = new ArrayAdapter<String>(getActivity(),
+                        android.R.layout.simple_dropdown_item_1line, array_pasosT);
+                this.getInstrucciones().setAdapter(adapter_pasosT); //Set de instrucciones
+                break;
+            case "Noche":
+                this.getNombre_receta().setText(diet.getNigth().getNombre()); //Set del nombre de la receta
+                this.getCalorias().setText(Integer.toString(diet.getNigth().getCalorias())); //Set de las calorias
+                //Preparar el adapter de ingredientes
+                String[] array_ingredientesN = new String[diet.getNigth().getIngredientes().size()];
+                for(int i = 0; i<diet.getNigth().getIngredientes().size();i++){
+                    array_ingredientesN[i] = diet.getNigth().getIngredientes().get(i);
+                }
+                ArrayAdapter<String> adapter_ingredientesN = new ArrayAdapter<String>(getActivity(),
+                        android.R.layout.simple_dropdown_item_1line, array_ingredientesN);
+                this.getIngredientes().setAdapter(adapter_ingredientesN); //Set de ingredientes
+                //Preparar el adapter de instrucciones
+                String[] array_pasosN = new String[diet.getNigth().getPasos().size()];
+                for(int i = 0; i<diet.getNigth().getPasos().size();i++){
+                    array_pasosN[i] = diet.getNigth().getPasos().get(i);
+                }
+                ArrayAdapter<String> adapter_pasosN = new ArrayAdapter<String>(getActivity(),
+                        android.R.layout.simple_dropdown_item_1line, array_pasosN);
+                this.getInstrucciones().setAdapter(adapter_pasosN); //Set de instrucciones
+                break;
+        }
+
+        dia.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                setData(getBaby(getBebe().getSelectedItem().toString()),Integer.parseInt(getDia().getSelectedItem().toString()));
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+
+        bebe.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                setData(getBaby(getBebe().getSelectedItem().toString()),Integer.parseInt(getDia().getSelectedItem().toString()));
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+
+    }
+
     public void addBaby_list(Baby baby) {
         this.baby_list.add(baby);
     }
@@ -296,6 +451,42 @@ public class MainFragment extends Fragment {
 
     public void setDietPerBaby(HashMap<Baby, ArrayList<Diet>> dietPerBaby) {
         this.dietPerBaby = dietPerBaby;
+    }
+
+    public TextView getHora() {
+        return hora;
+    }
+
+    public TextView getNombre_receta() {
+        return nombre_receta;
+    }
+
+    public TextView getCalorias() {
+        return calorias;
+    }
+
+    public ListView getInstrucciones() {
+        return instrucciones;
+    }
+
+    public ListView getIngredientes() {
+        return ingredientes;
+    }
+
+    public Spinner getDia() {
+        return dia;
+    }
+
+    public Spinner getBebe() {
+        return bebe;
+    }
+
+    public String getComida() {
+        return comida;
+    }
+
+    public void setComida(String comida) {
+        this.comida = comida;
     }
 
     //Array para el spinner de dias
