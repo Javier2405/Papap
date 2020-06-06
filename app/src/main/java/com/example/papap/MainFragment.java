@@ -44,6 +44,8 @@ public class MainFragment extends Fragment {
 
     String comida = "Mañana";
 
+    LoadingDialog loadingDialog;
+
     ArrayList<Baby> baby_list;
     String[] babies;
     HashMap<Baby,ArrayList<Diet>> dietPerBaby;
@@ -106,12 +108,16 @@ public class MainFragment extends Fragment {
         //Hacer set de la información HECHO
         //Los botones hacen un set a la información HECHO
         //El spinner hace un set a la información HECHO
-        //Agregar alerta de carga
+        //Agregar alerta de carga HECHO
 
         MainActivity activity = (MainActivity) getActivity();
         View view = inflater.inflate(R.layout.fragment_main, container, false);
 
         db = FirebaseFirestore.getInstance();
+
+        this.setLoadingDialog(new LoadingDialog(getActivity()));
+
+        loadingDialog.startLoadingDialog();
 
         dia = view.findViewById(R.id.spinner_dia);
         ArrayAdapter<String> adapterDia = new ArrayAdapter<String>(activity,
@@ -339,7 +345,7 @@ public class MainFragment extends Fragment {
         switch (getComida()){
             case "Mañana":
                 this.getNombre_receta().setText(diet.getMorning().getNombre()); //Set del nombre de la receta
-                this.getCalorias().setText(Integer.toString(diet.getMorning().getCalorias())); //Set de las calorias
+                this.getCalorias().setText(Integer.toString(diet.getMorning().getCalorias()) + " calorias por porción"); //Set de las calorias
                 //Preparar el adapter de ingredientes
                 String[] array_ingredientes = new String[diet.getMorning().getIngredientes().size()];
                 for(int i = 0; i<diet.getMorning().getIngredientes().size();i++){
@@ -359,7 +365,7 @@ public class MainFragment extends Fragment {
                 break;
             case "Tarde":
                 this.getNombre_receta().setText(diet.getEvening().getNombre()); //Set del nombre de la receta
-                this.getCalorias().setText(Integer.toString(diet.getEvening().getCalorias())); //Set de las calorias
+                this.getCalorias().setText(Integer.toString(diet.getEvening().getCalorias()) + " calorias por porción"); //Set de las calorias
                 //Preparar el adapter de ingredientes
                 String[] array_ingredientesT = new String[diet.getEvening().getIngredientes().size()];
                 for(int i = 0; i<diet.getEvening().getIngredientes().size();i++){
@@ -379,7 +385,7 @@ public class MainFragment extends Fragment {
                 break;
             case "Noche":
                 this.getNombre_receta().setText(diet.getNigth().getNombre()); //Set del nombre de la receta
-                this.getCalorias().setText(Integer.toString(diet.getNigth().getCalorias())); //Set de las calorias
+                this.getCalorias().setText(Integer.toString(diet.getNigth().getCalorias()) + " calorias por porción"); //Set de las calorias
                 //Preparar el adapter de ingredientes
                 String[] array_ingredientesN = new String[diet.getNigth().getIngredientes().size()];
                 for(int i = 0; i<diet.getNigth().getIngredientes().size();i++){
@@ -423,6 +429,7 @@ public class MainFragment extends Fragment {
             }
         });
 
+        this.getLoadingDialog().dismissDialog();
     }
 
     public void addBaby_list(Baby baby) {
@@ -487,6 +494,14 @@ public class MainFragment extends Fragment {
 
     public void setComida(String comida) {
         this.comida = comida;
+    }
+
+    public LoadingDialog getLoadingDialog() {
+        return loadingDialog;
+    }
+
+    public void setLoadingDialog(LoadingDialog loadingDialog) {
+        this.loadingDialog = loadingDialog;
     }
 
     //Array para el spinner de dias
