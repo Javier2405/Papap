@@ -19,8 +19,6 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentChange;
 import com.google.firebase.firestore.DocumentReference;
@@ -42,7 +40,6 @@ import java.util.List;
  */
 public class MainFragment extends Fragment {
     FirebaseFirestore db;
-
     String userID;
 
     String comida = "Mañana";
@@ -248,10 +245,10 @@ public class MainFragment extends Fragment {
                     setDietsPerBaby();
 
                     //Imprimo las dietas de los engendros
-                    //printDietsPerBaby();
+                    printDietsPerBaby();
 
                     //Hago el set de los datos en la view
-
+                    setData(getBaby(getBebe().getSelectedItem().toString()),Integer.parseInt(getDia().getSelectedItem().toString()));
                 } else {
                     Log.d("ERROR", "Error getting documents: ", task.getException());
                 }
@@ -261,48 +258,17 @@ public class MainFragment extends Fragment {
 
     private void setDietsPerBaby(){
         //Pasar por el array de bebes para hacer el set de la dieta del mes para los bebes
+        HashMap<Baby,ArrayList<Diet>> dietPerBaby = new HashMap<>();
 
-            db.collection("users").document(userID).collection("bebe").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+        for (int i =0;i<this.baby_list.size();i++){
+            //Obtengo la dieta mensual para cade bebe y la voy almacenando
+            dietPerBaby.put(this.baby_list.get(i),this.setDiet(this.baby_list.get(i),this.paps));
+        }
 
-                @Override
-                public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                    if (task.isSuccessful()) {
-                        for (QueryDocumentSnapshot document : task.getResult()) {
-                            Baby baby = new Baby();
-                            for (int i = 0;i<getBaby_list().size();i++){
-                                if(document.get("Nombre").equals(getBaby_list().get(i).getName())){
-                                    baby = getBaby_list().get(i);
-                                }
-                            }
-                            Log.d("FB******", baby.toString());
-
-                            putDietPerBaby(baby,setDiet(baby,getPaps(),document));
-
-                        }
-                        printDietsPerBaby();
-                        setData(getBaby(getBebe().getSelectedItem().toString()),Integer.parseInt(getDia().getSelectedItem().toString()));
-                    } else {
-                        Log.d("ERROR", "Error getting documents: ", task.getException());
-                    }
-                }
-            });
+        this.setDietPerBaby(dietPerBaby);
     }
 
-    public void setDietFB(){
-        FirebaseFirestore fStore = FirebaseFirestore.getInstance();
-        ArrayList<Diet> month = new ArrayList<>();
-
-        /*for (int i =0; i<30;i++){
-            DocumentReference documentReference = fStore.collection("users").document(getUserID()).collection("month").document(Integer.toString(i));
-            Diet diet = new Diet();
-            Pap morning = new Pap(documentReference.get("morning").get);
-            Pap evening = new Pap();
-            Pap night = new Pap();
-        }*/
-
-    }
-
-    public ArrayList<Diet> setDiet(Baby baby, ArrayList<Pap> paps,QueryDocumentSnapshot document){
+    private ArrayList<Diet> setDiet(Baby baby,ArrayList<Pap> paps){
         PapsSelector papsSelector = new PapsSelector(baby.getGender(),baby.getAge(),baby.getDislikes());
         ArrayList<Diet> month = new ArrayList<>();
 
@@ -313,7 +279,6 @@ public class MainFragment extends Fragment {
                 validPaps.add(paps.get(i));
             }
         }
-        FirebaseFirestore fStore = FirebaseFirestore.getInstance();
 
         //Hacemos el set de un numero random y lo usamos para tomar papillas random de las validas
         double random;
@@ -340,26 +305,8 @@ public class MainFragment extends Fragment {
             }
             diet.setNigth(validPaps.get((int) random));
 
-            Log.d("INSERTION", Integer.toString(diet.getMorning().getCalorias()));
             month.add(diet);
-            DocumentReference documentReference = fStore.collection("users").document(getUserID()).collection("bebe").document().collection("month").document(Integer.toString(i));
-            documentReference.set(diet).addOnSuccessListener(new OnSuccessListener<Void>() {
-                @Override
-                public void onSuccess(Void aVoid) {
-                    Log.d("INSERTION", "onSuccess: user profile is created for "+ userID);
-                }
-            }).addOnFailureListener(new OnFailureListener() {
-                @Override
-                public void onFailure(@NonNull Exception e) {
-                    Log.d("INSERTION", "onFailure: "+ e.toString());
-                }
-            });
         }
-        /*Es el que debemos guardar en Firebase
-        * En usuario añadimos la coleccion month
-        * la cual tendra otra coleccion con cada dia
-        * y finalmente tendremos otra coleccion con la hora
-        * donde los campos seran los datos de las papillas*/
 
         return month;
     }
@@ -389,11 +336,11 @@ public class MainFragment extends Fragment {
 
     private void setData(int baby, int day){
         /*Hacer set de la hora
-        * Nombre de la receta
-        * Calorias
-        * Ingredientes
-        * Preparación
-        * */
+         * Nombre de la receta
+         * Calorias
+         * Ingredientes
+         * Preparación
+         * */
         this.getHora().setText(this.comida); //Set de hora
         Diet diet = this.dietPerBaby.get(baby_list.get(baby)).get(day-1); //Obtener la dieta del dia
         switch (getComida()){
@@ -494,10 +441,6 @@ public class MainFragment extends Fragment {
         return baby_list.get(i);
     }
 
-    public ArrayList<Baby> getBaby_list() {
-        return baby_list;
-    }
-
     public int sizeBaby_list() {
         return this.baby_list.size();
     }
@@ -512,10 +455,6 @@ public class MainFragment extends Fragment {
 
     public HashMap<Baby, ArrayList<Diet>> getDietPerBaby() {
         return dietPerBaby;
-    }
-
-    public void putDietPerBaby(Baby baby, ArrayList<Diet> diet){
-        this.dietPerBaby.put(baby,diet);
     }
 
     public void setDietPerBaby(HashMap<Baby, ArrayList<Diet>> dietPerBaby) {
@@ -564,14 +503,6 @@ public class MainFragment extends Fragment {
 
     public void setLoadingDialog(LoadingDialog loadingDialog) {
         this.loadingDialog = loadingDialog;
-    }
-
-    public String getUserID() {
-        return userID;
-    }
-
-    public ArrayList<Pap> getPaps() {
-        return paps;
     }
 
     //Array para el spinner de dias
