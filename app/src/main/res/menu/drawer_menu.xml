@@ -34,11 +34,6 @@
     <item android:title="@string/perfil_titulo">
         <menu>
             <item
-                android:id="@+id/profile"
-                android:icon="@drawable/ic_edit"
-                android:title="@string/editarPerfil_menu">
-            </item>
-            <item
                 android:id="@+id/payment"
                 android:icon="@drawable/ic_payment"
                 android:title="@string/metodoPago_menu">
