@@ -229,10 +229,16 @@ public class MainFragment extends Fragment {
                     }
                     //Termino de obtener los documents asi que procedo a hacer el set del nombre de los bebes para mi spinner
 
-                    String[] babiesName = new String[sizeBaby_list()];
-                    for (int i = 0;babiesName.length>i;i++){
-                        babiesName[i] = getBaby_list(i).getName();
+                    String[] babiesName;
+                    if(sizeBaby_list()==0){
+                        babiesName = new String[1];
+                        babiesName[0]="No hay ningun bebe disponible";
+                    }else {
+                        babiesName = new String[sizeBaby_list()];
+                        for (int i = 0; babiesName.length > i; i++) {
+                            babiesName[i] = getBaby_list(i).getName();
 
+                        }
                     }
 
                     Spinner bebe = view.findViewById(R.id.spinner_bebe);
@@ -240,6 +246,11 @@ public class MainFragment extends Fragment {
                             android.R.layout.simple_dropdown_item_1line, babiesName);
                     bebe.setAdapter(adapterBebe);
                     setBabies(babiesName);
+
+                    if(sizeBaby_list()==0){
+                        getLoadingDialog().dismissDialog();
+                        return;
+                    }
 
                     //Llamo al metodo para crear el array de dietas de cada bebe
                     setDietsPerBaby();
