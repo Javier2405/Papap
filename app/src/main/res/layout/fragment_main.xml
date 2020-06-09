@@ -42,7 +42,7 @@
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="wrap_content">
 
             <TextView
                 android:id="@+id/textView_hora"
@@ -105,7 +105,9 @@
                 android:textColor="#3C3C3C"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/textView5" />
+                app:layout_constraintTop_toBottomOf="@+id/textView5" >
+
+            </ListView>
 
             <TextView
                 android:id="@+id/textView_calorias6"
@@ -119,6 +121,14 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/ingredientes" />
 
+            <VideoView
+                android:id="@+id/videoView"
+                android:layout_width="wrap_content"
+                android:layout_height="200dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/instrucciones" />
+
             <ListView
                 android:id="@+id/instrucciones"
                 android:layout_width="0dp"
@@ -130,8 +140,8 @@
                 app:layout_constraintStart_toStartOf="@+id/ingredientes"
                 app:layout_constraintTop_toBottomOf="@+id/textView_calorias6">
 
-
             </ListView>
+
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 

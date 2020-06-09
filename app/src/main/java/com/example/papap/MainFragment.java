@@ -1,5 +1,6 @@
 package com.example.papap;
 
+import android.net.Uri;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -7,6 +8,7 @@ import androidx.annotation.Nullable;
 import androidx.constraintlayout.solver.widgets.Snapshot;
 import androidx.fragment.app.Fragment;
 
+import android.provider.MediaStore;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,13 +17,19 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
+import android.widget.MediaController;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.VideoView;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.youtube.player.YouTubeBaseActivity;
+import com.google.android.youtube.player.YouTubeInitializationResult;
+import com.google.android.youtube.player.YouTubePlayer;
+import com.google.android.youtube.player.YouTubePlayerFragment;
 import com.google.firebase.firestore.DocumentChange;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.EventListener;
@@ -40,7 +48,7 @@ import java.util.List;
  * Use the {@link MainFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class MainFragment extends Fragment {
+public class MainFragment extends Fragment{
     FirebaseFirestore db;
 
     String userID;
@@ -179,6 +187,13 @@ public class MainFragment extends Fragment {
             }
         });
 
+        VideoView videoView = (VideoView) view.findViewById(R.id.videoView);
+        MediaController mediaController = new MediaController(getContext());
+        Uri uri = Uri.parse("rtsp://r5---sn-a5mlrnel.googlevideo.com/Cj0LENy73wIaNAkUADylx1fU4BMYESARFC1JFOBeMOCoAUIASARgjrq956GUx7peigELakNXQnJqd3BzcTQM/E535775A366CFC5553EAC48D4E84C1FD2C11EC.19C5B80E664368894A7A3D38BA375D06F576849F/yt8/1/video.3gp");
+        videoView.setMediaController(mediaController);
+        videoView.setVideoURI(uri);
+        videoView.requestFocus();
+        videoView.start();
 
 
         return view;
@@ -578,6 +593,5 @@ public class MainFragment extends Fragment {
     private static final String[] DIAS_OPTIONS = new String[] {
             "1","2","3","4","5","6","7","8","9","10","11","12","13","14","15","16","17","18","19","20","21","22","23","24","25","26","27","28","29","30"
     };
-
 
 }
