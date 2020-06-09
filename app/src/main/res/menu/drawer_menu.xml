@@ -1,42 +1,52 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <item android:title="Inicio">
+    <item android:title="@string/inicio_titulo">
         <menu>
             <item
                 android:id="@+id/home"
                 android:icon="@drawable/ic_home"
-                android:title="Inicio">
+                android:title="@string/inicio_titulo">
             </item>
         </menu>
     </item>
 
-    <item android:title="Bebes">
+    <item android:title="@string/bebes_titulo">
         <menu>
             <item
                 android:id="@+id/bebes"
                 android:icon="@drawable/ic_baby"
-                android:title="Mis bebes">
+                android:title="@string/bebes_menu">
             </item>
         </menu>
     </item>
 
-    <item android:title="Mi Perfil">
+    <item android:title="@string/mas_titulo">
+        <menu>
+            <item
+                android:id="@+id/mas"
+                android:icon="@drawable/ic_email"
+                android:title="@string/contactanos_menu">
+            </item>
+        </menu>
+    </item>
+
+    <item android:title="@string/perfil_titulo">
         <menu>
             <item
                 android:id="@+id/profile"
                 android:icon="@drawable/ic_edit"
-                android:title="Editar Perfil">
+                android:title="@string/editarPerfil_menu">
             </item>
             <item
                 android:id="@+id/payment"
                 android:icon="@drawable/ic_payment"
-                android:title="Métodos de pago">
+                android:title="@string/metodoPago_menu">
             </item>
             <item
                 android:id="@+id/exit"
                 android:icon="@drawable/ic_exit"
-                android:title="Cerrar Sesión">
+                android:title="@string/cerrarSesion_menu">
             </item>
         </menu>
     </item>

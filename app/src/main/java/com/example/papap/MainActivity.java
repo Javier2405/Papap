@@ -156,6 +156,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             fragmentTransaction.replace(R.id.container, new BebesFragment());
             fragmentTransaction.commit();
         }
+        if(item.getItemId() == R.id.mas){
+            fragmentManager = getSupportFragmentManager();
+            fragmentTransaction = fragmentManager.beginTransaction();
+            fragmentTransaction.replace(R.id.container, new Contact());
+            fragmentTransaction.commit();
+        }
         if(item.getItemId() == R.id.profile){
             fragmentManager = getSupportFragmentManager();
             fragmentTransaction = fragmentManager.beginTransaction();
