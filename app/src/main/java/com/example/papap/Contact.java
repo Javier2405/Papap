@@ -6,6 +6,7 @@ import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
 
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -78,6 +79,15 @@ public class Contact extends Fragment {
             public void onClick(View v) {
                 String asuntoText = asunto.getText().toString().trim();
                 String mensajeText = mensaje.getText().toString().trim();
+
+                if(TextUtils.isEmpty(asuntoText)){
+                    asunto.setError("Asunto es requerido");
+                    return;
+                }
+                if (TextUtils.isEmpty(mensajeText)){
+                    mensaje.setError("Mensaje es requerido");
+                    return;
+                }
 
                 sendEmail(asuntoText, mensajeText);
             }
