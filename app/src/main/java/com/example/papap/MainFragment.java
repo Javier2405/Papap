@@ -222,7 +222,8 @@ public class MainFragment extends Fragment {
                                 document.getString("Edad"),
                                 document.getString("Genero"),
                                 document.getString("Disgustos"),
-                                document.getString("Alergias"));
+                                document.getString("Alergias"),
+                                document.getString("id"));
                         addBaby_list(baby);
                         Log.d("BABY", baby.getName());
                     }

@@ -122,7 +122,8 @@ public class BebesFragment extends Fragment {
                                     documentChange.getDocument().getString("Edad"),
                                     documentChange.getDocument().getString("Genero"),
                                     documentChange.getDocument().getString("Disgustos"),
-                                    documentChange.getDocument().getString("Alergias"));
+                                    documentChange.getDocument().getString("Alergias"),
+                                    documentChange.getDocument().getString("id"));
                             baby_list.add(baby);
                             Log.d("LIST SIZE", Integer.toString(baby_list.size()));
                         }
@@ -130,37 +131,12 @@ public class BebesFragment extends Fragment {
                 }
             }
         });
-        /*documentReference.collection("bebe").get()
-                .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
-                    @Override
-                    public void onSuccess(QuerySnapshot documentSnapshots) {
-                        if (documentSnapshots.isEmpty()) {
-                            Log.d("empty", "onSuccess: LIST EMPTY");
-                            return;
-                        } else {
-                            // Convert the whole Query Snapshot to a list
-                            // of objects directly! No need to fetch each
-                            // document.
-                            List<Baby> types = documentSnapshots.toObjects(Baby.class);
-
-                            // Add all to your list
-                            baby_list.addAll(types);
-                            Log.d("lista", "onSuccess: " + baby_list);
-                            showData();
-                        }
-                    }})
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Log.d("error citas", e.getMessage());
-                    }
-                });*/
     }
 
     public void showData(){
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         Log.d("LIST SIZE SHOW", Integer.toString(this.baby_list.size()));
-        this.adapterBaby = new AdapterBaby(getContext(), this.baby_list);
+        this.adapterBaby = new AdapterBaby(getContext(), this.baby_list, this.userID);
         recyclerView.setAdapter(this.adapterBaby);
         this.adapterBaby.setOnClickListener(new View.OnClickListener() {
             @Override

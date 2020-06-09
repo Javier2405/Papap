@@ -69,22 +69,12 @@
         </TextView>
 
         <Button
-        android:id="@+id/edit_baby"
-        android:layout_width="80dp"
-        android:layout_height="50dp"
-        android:layout_marginStart="10dp"
-        android:background="@android:color/holo_blue_light"
-        android:layout_below="@id/babyDislikes"
-        android:text="@string/edit_baby" />
-
-        <Button
             android:id="@+id/delete_baby"
             android:layout_width="80dp"
             android:layout_height="50dp"
             android:layout_marginStart="10dp"
-            android:background="@android:color/holo_blue_light"
+            android:background="@color/colorPrimary"
             android:layout_below="@id/babyDislikes"
-            android:layout_toRightOf="@id/edit_baby"
             android:text="@string/delete_baby" />
 
     </RelativeLayout>

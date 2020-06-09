@@ -109,7 +109,6 @@ public class Register extends AppCompatActivity {
                             user.put("Nombre", fullName);
                             user.put("Correo Electronico", email);
                             user.put("Telefono", phone);
-                            user.put("tarjeta", false);
                             user.put("bebe", false);
                             //insert to data base
                             documentReference.set(user).addOnSuccessListener(new OnSuccessListener<Void>() {
