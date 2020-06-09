@@ -19,10 +19,10 @@ import java.util.ArrayList;
 public class AdapterCard extends RecyclerView.Adapter<AdapterCard.ViewHolder> implements View.OnClickListener{
 
     LayoutInflater inflater;
-    ArrayList<Card> model;
+    ArrayList<Payment> model;
     private View.OnClickListener listener;
 
-    public AdapterCard(Context context, ArrayList<Card> model){
+    public AdapterCard(Context context, ArrayList<Payment> model){
         this.inflater= LayoutInflater.from(context);
         this.model = model;
     }
@@ -41,19 +41,14 @@ public class AdapterCard extends RecyclerView.Adapter<AdapterCard.ViewHolder> im
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        String titular = model.get(position).getTitular();
-        String fVencimiento = model.get(position).getVencimiento();
-        String numTarjeta = model.get(position).getCardnum();
-        boolean selected = model.get(position).isSelected();
+        String titular = model.get(position).getid();
+        String fVencimiento = model.get(position).getState();
+        int numTarjeta = model.get(position).getAmount();
 
-        if(selected){
-           holder.select.setVisibility(View.INVISIBLE);
-           holder.recycler.setBackgroundColor(holder.color);
-        }
 
         holder.titular.setText(titular);
         holder.fVencimiento.setText(fVencimiento);
-        holder.numTarjeta.setText(numTarjeta);
+        holder.numTarjeta.setText("$ "+numTarjeta);
     }
 
     @Override
@@ -70,7 +65,6 @@ public class AdapterCard extends RecyclerView.Adapter<AdapterCard.ViewHolder> im
 
     public class ViewHolder extends RecyclerView.ViewHolder{
         TextView titular, fVencimiento, numTarjeta;
-        Button select;
         CardView recycler;
         int color;
 
@@ -79,7 +73,6 @@ public class AdapterCard extends RecyclerView.Adapter<AdapterCard.ViewHolder> im
             titular = itemView.findViewById(R.id.titular);
             fVencimiento = itemView.findViewById(R.id.fechaVencimiento);
             numTarjeta = itemView.findViewById(R.id.numeroTarjeta);
-            select = itemView.findViewById(R.id.select_card);
             recycler = itemView.findViewById(R.id.cardView);
             color = itemView.getResources().getColor(R.color.colorSelected);
         }

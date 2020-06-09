@@ -9,6 +9,7 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -16,6 +17,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -26,16 +28,21 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.paypal.android.sdk.payments.PayPalConfiguration;
+import com.paypal.android.sdk.payments.PayPalPayment;
+import com.paypal.android.sdk.payments.PayPalService;
+import com.paypal.android.sdk.payments.PaymentActivity;
+import com.paypal.android.sdk.payments.PaymentConfirmation;
 
+import org.json.JSONException;
+
+import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.Map;
 
 import javax.annotation.Nullable;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
-
-    TextView name, email, number;
-    Button logoutButton, dietButton;
     FirebaseAuth fAuth;
     FirebaseFirestore fStore;
     String userID;
@@ -73,73 +80,19 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         fragmentTransaction.add(R.id.container, new MainFragment());
         fragmentTransaction.commit();
 
-
-        /*
-        name = findViewById(R.id.nameView);
-        email = findViewById(R.id.emailView);
-        number = findViewById(R.id.numberView);
-        logoutButton = findViewById(R.id.logoutButton);
-        dietButton = findViewById(R.id.dietButton);
-
-         */
+        //Iniciar firebase
         fAuth = FirebaseAuth.getInstance();
         fStore = FirebaseFirestore.getInstance();
 
         userID = fAuth.getCurrentUser().getUid();
 
-        /*
-        //getting the user
-        final DocumentReference documentReference = fStore.collection("users").document(userID);
-        documentReference.addSnapshotListener(MainActivity.this, new EventListener<DocumentSnapshot>() {
-            @Override
-            public void onEvent(@Nullable DocumentSnapshot documentSnapshot, @Nullable FirebaseFirestoreException e) {
-                if (e!=null){
-                    Log.d("ERROR","Error:"+e.getMessage());
-                }else{
-                    name.setText("Nombre: "+ documentSnapshot.getString("Nombre"));
-                    email.setText("E-mail: "+ documentSnapshot.getString("Correo Electronico"));
-                    number.setText("Telefono: "+ documentSnapshot.getString("Telefono"));
-                }
-
-            }
-
-        });
-        logoutButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                FirebaseAuth.getInstance().signOut();
-                startActivity(new Intent(getApplicationContext(), Login.class));
-            }
-        });
-        //Dieta
-        dietButton.setOnClickListener((v) -> {
-            documentReference.addSnapshotListener(MainActivity.this, new EventListener<DocumentSnapshot>() {
-                @Override
-                public void onEvent(@Nullable DocumentSnapshot documentSnapshot, @Nullable FirebaseFirestoreException e) {
-                    if (e!=null){
-                        Log.d("ERROR","Error:"+e.getMessage());
-                    }else{
-                        if(documentSnapshot.getBoolean("tarjeta") && documentSnapshot.getBoolean("bebe")){
-                            Intent changeActivity = new Intent(getApplicationContext(), Paps.class);
-                            changeActivity.putExtra("userid",userID);
-                            startActivity(changeActivity);
-                        }else if(!documentSnapshot.getBoolean("tarjeta")){
-                            Intent changeActivity = new Intent(getApplicationContext(), CreditCard.class);
-                            changeActivity.putExtra("userid",userID);
-                            startActivity(changeActivity);
-                        }else if(!documentSnapshot.getBoolean("bebe")){
-                            Intent changeActivity = new Intent(getApplicationContext(), Information.class);
-                            changeActivity.putExtra("userid",userID);
-                            startActivity(changeActivity);
-                        }
-                    }
-                }
-            });
-        });
-
-         */
     }
+
+    protected void onDestroy(){
+        stopService(new Intent(this,PayPalService.class));
+        super.onDestroy();
+    }
+
 
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
@@ -175,6 +128,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         return false;
     }
+
 
     public String getUserID(){
         return this.userID;

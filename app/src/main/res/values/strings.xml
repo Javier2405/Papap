@@ -11,7 +11,7 @@
     //Fragment tarjetas
     <string name="select_card">"Seleccionar"</string>
     <string name="delete_card">"Borrar"</string>
-    <string name="add_card">"Añadir tarjeta"</string>
+    <string name="add_card">"Ejecutar transacción"</string>
 
     //Registro de tarjeta
     <string name="registrar_tarjeta">Registrar tarjeta de crédito</string>
