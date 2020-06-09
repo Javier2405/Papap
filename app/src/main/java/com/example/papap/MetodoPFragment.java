@@ -195,7 +195,7 @@ public class MetodoPFragment extends Fragment {
 
     private void processPayment() {
 
-        PayPalPayment payment = new PayPalPayment(new BigDecimal(500),"MXN","Payment by "+this.userID,PayPalPayment.PAYMENT_INTENT_SALE);
+        PayPalPayment payment = new PayPalPayment(new BigDecimal(200),"MXN","Payment by "+this.userID,PayPalPayment.PAYMENT_INTENT_SALE);
 
         Intent intent = new Intent(getActivity(), PaymentActivity.class);
         intent.putExtra(PayPalService.EXTRA_PAYPAL_CONFIGURATION,config);
