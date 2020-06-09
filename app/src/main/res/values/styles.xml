@@ -13,6 +13,7 @@
         <item name="colorPrimary">#ff9d00</item>
         <item name="colorPrimaryDark">#ff9d00</item>
         <item name="colorAccent">#ff9d00</item>
+        <item name="android:fontFamily">@font/gothic</item>
     </style>
 
 </resources>
