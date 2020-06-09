@@ -17,6 +17,7 @@ import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 
@@ -90,8 +91,9 @@ public class Information extends AppCompatActivity {
             String userID = extras.getString("userid");
 
             //getting the user
-            final DocumentReference documentReference = fStore.collection("users").document(userID);
+            final CollectionReference collectionReference = fStore.collection("users").document(userID).collection("bebe");
 
+            String id = collectionReference.document().getId();
             //set data into HashMap
             Map<String, Object> bebe = new HashMap<>();
             bebe.put("Edad", strEdad);
@@ -99,8 +101,9 @@ public class Information extends AppCompatActivity {
             bebe.put("Alergias", strAlergias);
             bebe.put("Disgustos", strDisgustos);
             bebe.put("Nombre",strNombre);
+            bebe.put("id",id);
             //insert to data base
-            documentReference.collection("bebe").document().set(bebe).addOnSuccessListener(new OnSuccessListener<Void>() {
+            collectionReference.document(id).set(bebe).addOnSuccessListener(new OnSuccessListener<Void>() {
                 @Override
                 public void onSuccess(Void aVoid) {
                     Log.d("INSERTION", "Info was added satisfactory");
@@ -117,6 +120,8 @@ public class Information extends AppCompatActivity {
 
             Map<String, Object> user = new HashMap<>();
             user.put("bebe", true);
+
+            final DocumentReference documentReference = fStore.collection("users").document(userID);
 
             documentReference.update(user).addOnSuccessListener(new OnSuccessListener<Void>() {
                 @Override

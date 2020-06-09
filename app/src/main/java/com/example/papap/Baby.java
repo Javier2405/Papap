@@ -1,17 +1,26 @@
 package com.example.papap;
 
 public class Baby {
-    private String Nombre, Edad, Genero, Disgustos, Alergias;
+    private String Nombre, Edad, Genero, Disgustos, Alergias, id;
 
-    public Baby(String name, String age, String gender, String dislikes, String allergic) {
+    public Baby(String name, String age, String gender, String dislikes, String allergic, String id) {
         this.Nombre = name;
         this.Edad = age;
         this.Genero = gender;
         this.Disgustos = dislikes;
         this.Alergias = allergic;
+        this.id = id;
     }
 
     public Baby() {
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 
     public String getName() {
