@@ -55,4 +55,7 @@
     <string name="close">close</string>
     <string name="open">open</string>
 
+    //API KEY
+    <string name="API_KEY">AIzaSyDzvzTcOfzz83lRSNSP2Av6KmLIFT8MPbM</string>
+
 </resources>
