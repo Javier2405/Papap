@@ -20,10 +20,13 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentChange;
 import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
@@ -97,6 +100,40 @@ public class MetodoPFragment extends Fragment {
             @Override
             public void onFailure(@NonNull Exception e) {
                 Log.d("INSERTION", "onFailure: "+ e.toString());
+            }
+        });
+
+        final int[] payments = new int[1];
+        documentReference.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if (task.isSuccessful()) {
+                    DocumentSnapshot document = task.getResult();
+                    if (document.exists()) {
+                        Log.d("pruebaGetdinero", "DocumentSnapshot data: " + document.getString("payment"));
+                        payments[0] =Integer.parseInt(document.getString("payment"));
+                    } else {
+                        Log.d("pruebaGetdinero", "No such document");
+                    }
+                } else {
+                    Log.d("pruebaGetdinero", "get failed with ", task.getException());
+                }
+            }
+        });
+
+        Map<String, Object> newUser = new HashMap<>();
+        newUser.put("payment", String.valueOf(payments[0] + 1));
+        newUser.put("paid",true);
+
+        documentReference.update(newUser).addOnSuccessListener(new OnSuccessListener<Void>() {
+            @Override
+            public void onSuccess(Void aVoid) {
+                Log.d("UPDATE", "sum on payment");
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Log.d("UPDATE", "onFailure: "+ e.toString());
             }
         });
     }
