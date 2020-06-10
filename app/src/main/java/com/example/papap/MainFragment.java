@@ -1,11 +1,10 @@
 package com.example.papap;
 
 import android.net.Uri;
+import android.app.Activity;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.constraintlayout.solver.widgets.Snapshot;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
@@ -37,10 +36,16 @@ import com.google.android.youtube.player.YouTubePlayerFragment;
 import com.google.android.youtube.player.YouTubePlayerSupportFragment;
 import com.google.android.youtube.player.YouTubePlayerView;
 import com.google.firebase.firestore.DocumentChange;
+import android.widget.ScrollView;
+import android.widget.Spinner;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.EventListener;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
@@ -83,6 +88,8 @@ public class MainFragment extends Fragment implements YouTubePlayer.OnInitialize
 
     YouTubePlayerSupportFragment youTubePlayerView;
     YouTubePlayer.OnInitializedListener youtubeInit;
+    ScrollView scroll;
+    boolean paid;
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -119,15 +126,6 @@ public class MainFragment extends Fragment implements YouTubePlayer.OnInitialize
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-
-        //Agregar valores a spinner HECHO
-        //Obtener array de papilla almacenadas HECHO
-        //Obtener array de papillas -> Obtener array de bebes y set de spinner -> Calcular las dietas de lo obtenido HECHO
-        //Hacer set de la información HECHO
-        //Los botones hacen un set a la información HECHO
-        //El spinner hace un set a la información HECHO
-        //Agregar alerta de carga HECHO
 
         MainActivity activity = (MainActivity) getActivity();
         View view = inflater.inflate(R.layout.fragment_main, container, false);
@@ -142,12 +140,12 @@ public class MainFragment extends Fragment implements YouTubePlayer.OnInitialize
         ArrayAdapter<String> adapterDia = new ArrayAdapter<String>(activity,
                 android.R.layout.simple_dropdown_item_1line, DIAS_OPTIONS);
         dia.setAdapter(adapterDia);
+
         bebe = view.findViewById(R.id.spinner_bebe);
         this.baby_list = new ArrayList<>();
         this.paps = new ArrayList<>();
         this.dietPerBaby = new HashMap<>();
         this.userID = activity.getUserID();
-        loadPaps(activity,view); //Loadpaps carga todas las paps de la base de datos, despues carga todos los bebes y finalmente hace el set de las dietas para cada dia
 
         hora = view.findViewById(R.id.textView_hora);
         nombre_receta = view.findViewById(R.id.textView_nombre_receta);
@@ -156,8 +154,20 @@ public class MainFragment extends Fragment implements YouTubePlayer.OnInitialize
         instrucciones = view.findViewById(R.id.instrucciones);
         ingredientes = view.findViewById(R.id.ingredientes);
 
+        String[] babiesName = new String[1];
+        babiesName[0]="No hay ningun bebe disponible";
+        Spinner bebe = view.findViewById(R.id.spinner_bebe);
+        ArrayAdapter<String> adapterBebe = new ArrayAdapter<String>(activity,
+                android.R.layout.simple_dropdown_item_1line, babiesName);
+        bebe.setAdapter(adapterBebe);
+        loadPaps(activity,view);
+
         btn_siguiente = view.findViewById(R.id.btn_siguiente);
         btn_anterior = view.findViewById(R.id.btn_anterior);
+
+        scroll = view.findViewById(R.id.scrollView3);
+
+        Log.d("paid", String.valueOf(getPaid()));
 
         btn_siguiente.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -194,6 +204,40 @@ public class MainFragment extends Fragment implements YouTubePlayer.OnInitialize
                 setData(getBaby(getBebe().getSelectedItem().toString()),Integer.parseInt(getDia().getSelectedItem().toString()));
             }
         });
+        return view;
+    }
+
+    private void setPayment(Activity activity, View view){
+        final DocumentReference documentReference = db.collection("users").document(userID);
+
+        documentReference.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if (task.isSuccessful()) {
+                    DocumentSnapshot document = task.getResult();
+                    if (document.exists()) {
+                        Log.d("pruebaGetdineroGuardar", "DocumentSnapshot data: " + document.getBoolean("paid"));
+                        setPaid(document.getBoolean("paid"));
+                        Log.d("paid in setter", String.valueOf(getPaid()));
+                    } else {
+                        Log.d("pruebaGetdinero", "No such document");
+                    }
+                } else {
+                    Log.d("pruebaGetdinero", "get failed with ", task.getException());
+                }
+                if(getPaid()) {
+                    scroll.setVisibility(View.VISIBLE);
+                    btn_anterior.setVisibility(View.VISIBLE);
+                    btn_siguiente.setVisibility(View.VISIBLE);
+                    //loadPaps((MainActivity) activity, view); //Loadpaps carga todas las paps de la base de datos, despues carga todos los bebes y finalmente hace el set de las dietas para cada dia
+                }else{
+                    scroll.setVisibility(View.INVISIBLE);
+                    btn_anterior.setVisibility(View.INVISIBLE);
+                    btn_siguiente.setVisibility(View.INVISIBLE);
+                    Toast.makeText(getContext(), "Favor de realizar un pago en el apartado \"Metodos de Pago\" para recibir la dieta", Toast.LENGTH_LONG).show();
+                }
+            }
+        });
 
         /*
         VideoView videoView = (VideoView) view.findViewById(R.id.videoView);
@@ -223,11 +267,18 @@ public class MainFragment extends Fragment implements YouTubePlayer.OnInitialize
         WebSettings webSettings = displayYoutubeVideo.getSettings();
         webSettings.setJavaScriptEnabled(true);
         displayYoutubeVideo.loadData(frameVideo, "text/html", "utf-8");
+    }
 
-        return view;
+    private void setPaid(boolean pay){
+        this.paid=pay;
+    }
+
+    private boolean getPaid(){
+        return this.paid;
     }
 
     private void loadPaps(MainActivity activity, View view){
+        setPayment(activity, view);
         //Obtengo todos los documentos de la collection paps de la base de datos
         db.collection("paps").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             private ArrayList<Pap> paps = new ArrayList<>();
@@ -275,16 +326,9 @@ public class MainFragment extends Fragment implements YouTubePlayer.OnInitialize
                     }
                     //Termino de obtener los documents asi que procedo a hacer el set del nombre de los bebes para mi spinner
 
-                    String[] babiesName;
-                    if(sizeBaby_list()==0){
-                        babiesName = new String[1];
-                        babiesName[0]="No hay ningun bebe disponible";
-                    }else {
-                        babiesName = new String[sizeBaby_list()];
-                        for (int i = 0; babiesName.length > i; i++) {
-                            babiesName[i] = getBaby_list(i).getName();
-
-                        }
+                    String[] babiesName = new String[sizeBaby_list()];
+                    for (int i = 0; babiesName.length > i; i++) {
+                        babiesName[i] = getBaby_list(i).getName();
                     }
 
                     Spinner bebe = view.findViewById(R.id.spinner_bebe);
@@ -378,6 +422,8 @@ public class MainFragment extends Fragment implements YouTubePlayer.OnInitialize
             }
         }
     }
+
+
 
     private int getBaby(String name){
         int i = 0;

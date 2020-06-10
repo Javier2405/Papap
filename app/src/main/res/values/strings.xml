@@ -2,6 +2,9 @@
     <string name="app_name">Papap</string>
     <string name="dieta">Dieta</string>
 
+    //main fragment
+    <string name="run_algorithm">Obtener dieta</string>
+
     //restablecer contraseña
     <string name="resetTitulo">Restablece tu contraseña</string>
     <string name="resetMensaje">Ingresa tu correo y haz click en el link para cambiar tu contraseña</string>
