@@ -1,5 +1,7 @@
 package com.example.papap;
 
+import android.util.Log;
+
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -58,6 +60,7 @@ public class PapsSelector {
 
             for(int i =0;ingredients.size()<i;i++){
                 if(this.preferences.equals(ingredients.get(i))){
+
                     return false;
                 }
             }

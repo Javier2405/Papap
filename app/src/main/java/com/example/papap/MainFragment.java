@@ -375,12 +375,22 @@ public class MainFragment extends Fragment{
 
         //Revisar cuales papilla se le pueden dar al bebe almacenarlas y luego usando numeros random dar tres por dia
         ArrayList<Pap> validPaps = new ArrayList<>();
+        Log.d("VALID PAPS", Integer.toString(paps.size()));
         for (int i = 0;i<paps.size();i++){
-            if(papsSelector.validPaps(paps.get(i).getIngredientes())){
+            boolean valid = true;
+            for (int j = 0;j<paps.get(i).getIngredientes().size();j++){
+                Log.d("VALID PAPS", baby.getDislikes());
+                Log.d("VALID PAPS", paps.get(i).getIngredientes().get(j));
+                if(baby.getDislikes().equals(paps.get(i).getIngredientes().get(j)) || baby.getAllergic().equals(paps.get(i).getIngredientes().get(j))){
+                    valid = false;
+                    Log.d("VALID PAPS", "PAPILLA ELIMINADA");
+                }
+            }
+            if(valid){
                 validPaps.add(paps.get(i));
             }
         }
-
+        Log.d("VALID PAPS", "TERMINA");
         //Hacemos el set de un numero random y lo usamos para tomar papillas random de las validas
         double random;
 
