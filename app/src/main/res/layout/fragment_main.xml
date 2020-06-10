@@ -114,7 +114,6 @@
                 android:layout_marginStart="32dp"
                 android:layout_marginEnd="32dp"
                 android:fadeScrollbars="false"
-                android:nestedScrollingEnabled="true"
                 android:textColor="#3C3C3C"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
