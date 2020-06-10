@@ -7,12 +7,18 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.constraintlayout.solver.widgets.Snapshot;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.webkit.WebChromeClient;
+import android.webkit.WebSettings;
+import android.webkit.WebView;
+import android.webkit.WebViewClient;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -30,6 +36,8 @@ import com.google.android.youtube.player.YouTubeBaseActivity;
 import com.google.android.youtube.player.YouTubeInitializationResult;
 import com.google.android.youtube.player.YouTubePlayer;
 import com.google.android.youtube.player.YouTubePlayerFragment;
+import com.google.android.youtube.player.YouTubePlayerSupportFragment;
+import com.google.android.youtube.player.YouTubePlayerView;
 import com.google.firebase.firestore.DocumentChange;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.EventListener;
@@ -48,7 +56,7 @@ import java.util.List;
  * Use the {@link MainFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class MainFragment extends Fragment{
+public class MainFragment extends Fragment implements YouTubePlayer.OnInitializedListener{
     FirebaseFirestore db;
 
     String userID;
@@ -75,6 +83,9 @@ public class MainFragment extends Fragment{
 
     Button btn_siguiente;
     Button btn_anterior;
+
+    YouTubePlayerSupportFragment youTubePlayerView;
+    YouTubePlayer.OnInitializedListener youtubeInit;
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -187,14 +198,34 @@ public class MainFragment extends Fragment{
             }
         });
 
+        /*
         VideoView videoView = (VideoView) view.findViewById(R.id.videoView);
         MediaController mediaController = new MediaController(getContext());
-        Uri uri = Uri.parse("rtsp://r5---sn-a5mlrnel.googlevideo.com/Cj0LENy73wIaNAkUADylx1fU4BMYESARFC1JFOBeMOCoAUIASARgjrq956GUx7peigELakNXQnJqd3BzcTQM/E535775A366CFC5553EAC48D4E84C1FD2C11EC.19C5B80E664368894A7A3D38BA375D06F576849F/yt8/1/video.3gp");
+        //Uri uri = Uri.parse("https://www.youtube.com/watch?v=4NRXx6U8ABQ");
         videoView.setMediaController(mediaController);
-        videoView.setVideoURI(uri);
+        //videoView.setVideoURI(uri);
         videoView.requestFocus();
         videoView.start();
 
+
+        WebView videoView =(WebView) view.findViewById(R.id.videoView);
+        videoView.getSettings().setJavaScriptEnabled(true);
+        videoView.getSettings().setPluginState(WebSettings.PluginState.ON);
+        videoView.loadUrl("http://www.youtube.com/embed/" + "4NRXx6U8ABQ" + "?autoplay=1&vq=small");
+        videoView.setWebChromeClient(new WebChromeClient());
+
+        */
+        String frameVideo = "<html><body>Prcedimiento<br><iframe width=\"300\" height=\"200\" src=\"https://www.youtube.com/embed/fQs9r-NaaXg\" frameborder=\"0\" allowfullscreen></iframe></body></html>";
+        WebView displayYoutubeVideo = (WebView) view.findViewById(R.id.video);
+        displayYoutubeVideo.setWebViewClient(new WebViewClient() {
+            @Override
+            public boolean shouldOverrideUrlLoading(WebView view, String url) {
+                return false;
+            }
+        });
+        WebSettings webSettings = displayYoutubeVideo.getSettings();
+        webSettings.setJavaScriptEnabled(true);
+        displayYoutubeVideo.loadData(frameVideo, "text/html", "utf-8");
 
         return view;
     }
@@ -594,4 +625,13 @@ public class MainFragment extends Fragment{
             "1","2","3","4","5","6","7","8","9","10","11","12","13","14","15","16","17","18","19","20","21","22","23","24","25","26","27","28","29","30"
     };
 
+    @Override
+    public void onInitializationSuccess(YouTubePlayer.Provider provider, YouTubePlayer youTubePlayer, boolean b) {
+
+    }
+
+    @Override
+    public void onInitializationFailure(YouTubePlayer.Provider provider, YouTubeInitializationResult youTubeInitializationResult) {
+
+    }
 }

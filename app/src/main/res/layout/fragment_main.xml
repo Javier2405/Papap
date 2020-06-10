@@ -42,7 +42,8 @@
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            tools:ignore="WebViewLayout">
 
             <TextView
                 android:id="@+id/textView_hora"
@@ -121,13 +122,14 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/ingredientes" />
 
-            <VideoView
-                android:id="@+id/videoView"
-                android:layout_width="wrap_content"
+            <WebView
+                android:id="@+id/video"
+                android:layout_width="300dp"
                 android:layout_height="200dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/instrucciones" />
+                app:layout_constraintTop_toBottomOf="@+id/instrucciones"
+                />
 
             <ListView
                 android:id="@+id/instrucciones"
