@@ -59,7 +59,7 @@ import java.util.List;
  * Use the {@link MainFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class MainFragment extends Fragment implements YouTubePlayer.OnInitializedListener{
+public class MainFragment extends Fragment{
     FirebaseFirestore db;
     String userID;
 
@@ -612,14 +612,5 @@ public class MainFragment extends Fragment implements YouTubePlayer.OnInitialize
     private static final String[] DIAS_OPTIONS = new String[] {
             "1","2","3","4","5","6","7","8","9","10","11","12","13","14","15","16","17","18","19","20","21","22","23","24","25","26","27","28","29","30"
     };
-
-    @Override
-    public void onInitializationSuccess(YouTubePlayer.Provider provider, YouTubePlayer youTubePlayer, boolean b) {
-
-    }
-
-    @Override
-    public void onInitializationFailure(YouTubePlayer.Provider provider, YouTubeInitializationResult youTubeInitializationResult) {
-
-    }
+    
 }
